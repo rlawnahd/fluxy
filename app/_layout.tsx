@@ -8,7 +8,6 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 
-import { useColorScheme } from '@/components/useColorScheme';
 import { useAuth } from '@src/hooks/useAuth';
 
 export { ErrorBoundary } from 'expo-router';
@@ -67,13 +66,29 @@ export default function RootLayout() {
   );
 }
 
-function RootLayoutNav() {
-  const colorScheme = useColorScheme();
+const FluxyDarkTheme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    primary: '#00F5D4',
+    background: '#0A1A1F',
+    card: '#0A1A1F',
+    text: '#FFFFFF',
+    border: 'rgba(255, 255, 255, 0.1)',
+    notification: '#00F5D4',
+  },
+};
 
+function RootLayoutNav() {
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={FluxyDarkTheme}>
       <AuthGuard>
-        <Stack screenOptions={{ headerShown: false }}>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: '#0A1A1F' },
+          }}
+        >
           <Stack.Screen name="(auth)" />
           <Stack.Screen name="(tabs)" />
           <Stack.Screen
@@ -82,6 +97,9 @@ function RootLayoutNav() {
               presentation: 'modal',
               headerShown: true,
               title: '지출 추가',
+              headerStyle: { backgroundColor: '#0A1A1F' },
+              headerTintColor: '#FFFFFF',
+              headerTitleStyle: { fontWeight: '600' },
             }}
           />
           <Stack.Screen
@@ -89,6 +107,10 @@ function RootLayoutNav() {
             options={{
               headerShown: true,
               title: '지출 상세',
+              headerStyle: { backgroundColor: '#0A1A1F' },
+              headerTintColor: '#FFFFFF',
+              headerTitleStyle: { fontWeight: '600' },
+              headerTransparent: true,
             }}
           />
         </Stack>

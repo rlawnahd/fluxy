@@ -1,5 +1,7 @@
 import { View, Text, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
+import { GlassCard } from '@src/components/GlassCard';
 
 export default function CalendarScreen() {
   const currentDate = new Date();
@@ -12,7 +14,6 @@ export default function CalendarScreen() {
   const monthNames = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
   const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
 
-  // TODO: 실제 결제일 데이터로 교체
   const paymentDays: { [key: number]: { name: string; amount: number; icon: string }[] } = {
     1: [{ name: '헬스장', amount: 99000, icon: '💪' }],
     10: [{ name: '자동차 보험', amount: 150000, icon: '🛡️' }],
@@ -39,15 +40,24 @@ export default function CalendarScreen() {
           {isValidDay && (
             <>
               <View
-                className={`w-8 h-8 rounded-full justify-center items-center ${
-                  isToday ? 'bg-primary' : ''
+                className={`w-9 h-9 rounded-full justify-center items-center ${
+                  isToday ? 'overflow-hidden' : ''
                 }`}
               >
-                <Text className={`text-sm ${isToday ? 'text-white font-semibold' : 'text-gray-800'}`}>
-                  {dayNumber}
-                </Text>
+                {isToday ? (
+                  <LinearGradient
+                    colors={['#00F5D4', '#00D4FF']}
+                    className="w-full h-full justify-center items-center"
+                  >
+                    <Text className="text-dark font-bold">{dayNumber}</Text>
+                  </LinearGradient>
+                ) : (
+                  <Text className="text-white/80">{dayNumber}</Text>
+                )}
               </View>
-              {hasPayment && <View className="w-1.5 h-1.5 rounded-full bg-danger mt-0.5" />}
+              {hasPayment && (
+                <View className="w-1.5 h-1.5 rounded-full bg-neon-yellow mt-0.5" />
+              )}
             </>
           )}
         </View>
@@ -63,61 +73,72 @@ export default function CalendarScreen() {
     .slice(0, 5);
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-100" edges={['top']}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View className="px-5 py-4">
-          <Text className="text-3xl font-bold text-gray-800">
-            {year}년 {monthNames[month]}
-          </Text>
-        </View>
+    <View className="flex-1 bg-dark">
+      <LinearGradient
+        colors={['#0A1A1F', '#0D2530', '#143D4D']}
+        className="absolute inset-0"
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      />
 
-        {/* 캘린더 */}
-        <View className="bg-white mx-5 rounded-2xl p-4">
-          <View className="flex-row mb-2">
-            {dayNames.map((day, index) => (
-              <Text
-                key={day}
-                className={`flex-1 text-center text-sm font-medium ${
-                  index === 0 ? 'text-danger' : index === 6 ? 'text-secondary' : 'text-gray-500'
-                }`}
-              >
-                {day}
-              </Text>
-            ))}
+      <SafeAreaView className="flex-1" edges={['top']}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View className="px-5 py-4">
+            <Text className="text-white text-2xl font-bold">
+              {year}년 {monthNames[month]}
+            </Text>
           </View>
-          <View className="flex-row flex-wrap">{renderCalendar()}</View>
-        </View>
 
-        {/* 다가오는 결제 */}
-        <View className="p-5">
-          <Text className="text-lg font-semibold text-gray-800 mb-3">이번 달 남은 결제</Text>
-          <View className="bg-white rounded-2xl overflow-hidden">
-            {upcomingPayments.map(([day, payments]) => (
-              <View key={day}>
-                {payments.map((payment, index) => (
-                  <View
-                    key={index}
-                    className="flex-row justify-between items-center p-4 border-b border-gray-100"
-                  >
-                    <View className="flex-row items-center gap-3">
-                      <Text className="text-2xl">{payment.icon}</Text>
-                      <View>
-                        <Text className="text-base font-medium text-gray-800">{payment.name}</Text>
-                        <Text className="text-xs text-gray-400 mt-0.5">
-                          {month + 1}/{day}
-                        </Text>
+          {/* 캘린더 */}
+          <GlassCard className="mx-5 p-4">
+            <View className="flex-row mb-3">
+              {dayNames.map((day, index) => (
+                <Text
+                  key={day}
+                  className={`flex-1 text-center text-sm font-medium ${
+                    index === 0 ? 'text-red-400' : index === 6 ? 'text-blue-400' : 'text-white/40'
+                  }`}
+                >
+                  {day}
+                </Text>
+              ))}
+            </View>
+            <View className="flex-row flex-wrap">{renderCalendar()}</View>
+          </GlassCard>
+
+          {/* 다가오는 결제 */}
+          <View className="p-5">
+            <Text className="text-white text-lg font-semibold mb-3">이번 달 남은 결제</Text>
+            <GlassCard className="overflow-hidden">
+              {upcomingPayments.map(([day, payments]) => (
+                <View key={day}>
+                  {payments.map((payment, index) => (
+                    <View
+                      key={index}
+                      className="flex-row justify-between items-center p-4 border-b border-white/10"
+                    >
+                      <View className="flex-row items-center gap-3">
+                        <View className="w-10 h-10 rounded-xl bg-white/10 justify-center items-center">
+                          <Text className="text-xl">{payment.icon}</Text>
+                        </View>
+                        <View>
+                          <Text className="text-white font-medium">{payment.name}</Text>
+                          <Text className="text-white/40 text-xs mt-0.5">
+                            {month + 1}/{day}
+                          </Text>
+                        </View>
                       </View>
+                      <Text className="text-white font-semibold">
+                        ₩{payment.amount.toLocaleString()}
+                      </Text>
                     </View>
-                    <Text className="text-base font-semibold text-gray-800">
-                      ₩{payment.amount.toLocaleString()}
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            ))}
+                  ))}
+                </View>
+              ))}
+            </GlassCard>
           </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+        </ScrollView>
+      </SafeAreaView>
+    </View>
   );
 }

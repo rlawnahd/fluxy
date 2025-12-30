@@ -9,7 +9,9 @@ import {
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import { supabase } from '@src/lib/supabase';
+import { GlassCard } from '@src/components/GlassCard';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -49,55 +51,85 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="flex-1 justify-center px-6"
-      >
-        <View className="items-center mb-12">
-          <Text className="text-5xl font-bold text-primary">Fluxy</Text>
-          <Text className="text-base text-gray-500 mt-2">흐르는 돈, 한눈에</Text>
-        </View>
+    <View className="flex-1 bg-dark">
+      <LinearGradient
+        colors={['#0A1A1F', '#0D2530', '#143D4D']}
+        className="absolute inset-0"
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      />
 
-        <View className="gap-4">
-          <TextInput
-            className="border border-gray-200 rounded-xl p-4 text-base bg-gray-50"
-            placeholder="이메일"
-            placeholderTextColor="#999"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-          <TextInput
-            className="border border-gray-200 rounded-xl p-4 text-base bg-gray-50"
-            placeholder="비밀번호"
-            placeholderTextColor="#999"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
+      <SafeAreaView className="flex-1">
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          className="flex-1 justify-center px-6"
+        >
+          {/* 로고 */}
+          <View className="items-center mb-12">
+            <Text className="text-5xl font-bold text-neon-mint">Fluxy</Text>
+            <Text className="text-white/60 text-base mt-2">흐르는 돈, 한눈에</Text>
+          </View>
+
+          {/* 로그인 폼 */}
+          <GlassCard className="p-6">
+            <View className="gap-4">
+              <View>
+                <Text className="text-white/60 text-sm mb-2">이메일</Text>
+                <TextInput
+                  className="bg-white/5 border border-white/20 rounded-xl p-4 text-white"
+                  placeholder="email@example.com"
+                  placeholderTextColor="rgba(255,255,255,0.3)"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+              </View>
+
+              <View>
+                <Text className="text-white/60 text-sm mb-2">비밀번호</Text>
+                <TextInput
+                  className="bg-white/5 border border-white/20 rounded-xl p-4 text-white"
+                  placeholder="••••••••"
+                  placeholderTextColor="rgba(255,255,255,0.3)"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                />
+              </View>
+
+              <TouchableOpacity
+                className={`mt-2 rounded-xl overflow-hidden ${loading ? 'opacity-60' : ''}`}
+                onPress={handleAuth}
+                disabled={loading}
+              >
+                <LinearGradient
+                  colors={['#00F5D4', '#00D4FF']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  className="p-4 items-center"
+                >
+                  <Text className="text-dark font-bold text-lg">
+                    {loading ? '처리 중...' : isLogin ? '로그인' : '회원가입'}
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          </GlassCard>
 
           <TouchableOpacity
-            className={`bg-primary rounded-xl p-4 items-center mt-2 ${loading ? 'opacity-60' : ''}`}
-            onPress={handleAuth}
-            disabled={loading}
-          >
-            <Text className="text-white text-lg font-semibold">
-              {loading ? '처리 중...' : isLogin ? '로그인' : '회원가입'}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            className="items-center mt-4"
+            className="items-center mt-6"
             onPress={() => setIsLogin(!isLogin)}
           >
-            <Text className="text-primary text-sm">
-              {isLogin ? '계정이 없으신가요? 회원가입' : '이미 계정이 있으신가요? 로그인'}
+            <Text className="text-white/60">
+              {isLogin ? '계정이 없으신가요? ' : '이미 계정이 있으신가요? '}
+              <Text className="text-neon-mint font-semibold">
+                {isLogin ? '회원가입' : '로그인'}
+              </Text>
             </Text>
           </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </View>
   );
 }
